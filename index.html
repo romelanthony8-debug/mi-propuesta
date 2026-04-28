@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 Para la persona más especial</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            /* Fondo de pantalla: textura de bokeh rosa */
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                        url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Tarjeta Principal (Pregunta) */
+        #main-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 50px 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+            transition: all 1s ease;
+        }
+
+        h1 { color: white; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        p { color: #ffe5ec; font-size: 1.2rem; margin-bottom: 30px; }
+
+        /* Botones */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 80px;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #si { background: #ff4d6d; color: white; box-shadow: 0 5px 15px rgba(255, 77, 109, 0.5); }
+        #si:hover { transform: scale(1.1); }
+
+        #no { 
+            background: white; 
+            color: #ff4d6d; 
+            position: relative; 
+            transition: all 0.2s ease;
+            z-index: 999;
+        }
+
+        /* Pantalla de Éxito (Oculta al inicio) */
+        #success-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            animation: fadeIn 1.5s forwards;
+            padding: 20px;
+        }
+
+        /* Estilos para la imagen de internet */
+        .image-container {
+            width: 90%;
+            max-width: 600px;
+            margin-top: 30px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Corazones flotantes de fondo */
+        .floating-heart {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+            animation: float 6s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-card">
+        <h1>💖 ¿Quieres ser el amor de mi vida?</h1>
+        <p>Prometo cuidarte y quererte cada día más...</p>
+        <div class="btn-group">
+            <button id="si" onclick="aceptar()">¡SÍ, ACEPTO! 😍</button>
+            <button id="no" onmouseover="moverBoton(this)" onclick="moverBoton(this)">No 😢</button>
+        </div>
+    </div>
+
+    <div id="success-screen">
+        <h1 style="color: #ff4d6d;">❤️ ¡ERES LO MEJOR DE MI VIDA! ❤️</h1>
+        <p>Nuestra historia comienza ahora...</p>
+        
+        <div class="image-container">
+            <img src="https://images.unsplash.com/photo-1531747118685-61762cc49610?q=80&w=600" alt="Pareja romántica genérica">
+        </div>
+        <button onclick="location.reload()" style="margin-top: 30px; font-size: 14px; background: none; color: gray; border: 1px solid gray; padding: 10px 20px; border-radius: 20px;">Reiniciar</button>
+    </div>
+
+    <script>
+        // Lógica para que el botón NO huya dentro de los límites
+        function moverBoton(btn) {
+            btn.style.position = "absolute";
+            const margin = 20;
+            const maxX = window.innerWidth - btn.offsetWidth - margin;
+            const maxY = window.innerHeight - btn.offsetHeight - margin;
+            const randomX = Math.max(margin, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(margin, Math.floor(Math.random() * maxY));
+            btn.style.left = `${randomX}px`;
+            btn.style.top = `${randomY}px`;
+        }
+
+        // Acción al hacer clic en SÍ
+        function aceptar() {
+            // Efecto Confeti continuo por 5 segundos
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+
+            // Cambiar pantallas
+            document.getElementById('main-card').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'flex';
+        }
+
+        // Corazones flotantes de fondo
+        function crearCorazones() {
+            const heart = document.createElement("div");
+            heart.classList.add("floating-heart");
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = (Math.random() * 20 + 15) + "px";
+            heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(crearCorazones, 300);
+    </script>
+</body>
+</html>
